@@ -1,32 +1,35 @@
-#ifndef _BOTON_h         //Si no esta definido
+#ifndef _boton_h         //Si no esta definido
 
-#define _BOTON_h         //defino boton.h
+#define _boton_h         //defino boton.h
 
 #include <Arduino.h>
 
-class boton{
-    public:
-        boton(byte pin);
-        void Refresh();
-        PressTypes GetPressType();
-        long startDebouncingMillis;
-    
-        enum PressTypes{
-                NoPress;
-                Press;
-            }
-
+class boton
+{
     private:
         byte _pin;
-        int debounceTimeMs;           //Tiempo de rebote
-        PressTypes Presstype;
 
         enum State{
-            Idle;                       //Espero a que el boton se presione
-            DevouncingFirstPress;       //Espero el tiempo de rebote
-            WaitingStopPress;           //Espero que suelten el boton
-        }
+            Idle,                       //Espero a que el boton se presione
+            DevouncingFirstPress,       //Espero el tiempo de rebote
+            WaitingStopPress,           //Espero que suelten el boton
+        };
+        long startDebouncingMillis;
         State state;
-}
 
-#endif                  //Tengo que cerrarlo
+    public:
+        enum PressTypes{
+                NoPress,
+                Press,
+            };
+        PressTypes pressType;
+
+    public:
+        boton(byte pin);
+        int debounceTimeMs;
+        PressTypes GetPressType();
+        void Refresh();
+
+};
+
+#endif
