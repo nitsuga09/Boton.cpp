@@ -7,30 +7,29 @@ boton::boton(byte pin)
     pinMode(_pin, INPUT);
     debounceTimeMs = 100;
     state = Idle;
-    Presstype = NoPress;
 }
 
 void boton::Refresh() {
     switch(state){
         case Idle:
-            PressType = NoPress;
+            pressType = NoPress;
             if(digitalRead(_pin)){
                 state = DevouncingFirstPress;
                 startDebouncingMillis = millis();
-            }
+            };
             break;
         case DevouncingFirstPress:
             if(millis() - startDebouncingMillis >= debounceTimeMs){
                 if(digitalRead(_pin)){
                     state = WaitingStopPress;   //Si todavia esta pretado el boton (digital read) se va a poner en el estado WaitingStopPress si no esta presionado se pone en estado Idle
-                }
-            }
+                };
+            };
         break;
         case WaitingStopPress:
             if(!digitalRead(_pin)){
                 state = Idle;
-                Presstype = Press;
-            }
+                pressType = Press;
+            };
             break;
 
         default:
@@ -38,6 +37,6 @@ void boton::Refresh() {
     }
 }
 
-boton::PressTypes boton::GetPressType(){
-    return Press;
-}
+boton::PressTypes boton::GetPressType() {
+    return pressType;
+};
