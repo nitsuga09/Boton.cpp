@@ -2,10 +2,9 @@
 #include <boton.h>
 
 boton miBoton1(18);
-boton miBoton2(19);
 
 void setup() {
-  Serial.begin(9600):
+  Serial.begin(9600);
   Serial.print("Iniciando programa");
 }
 
