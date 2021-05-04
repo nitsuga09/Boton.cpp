@@ -1,37 +1,43 @@
-#ifndef _boton_h         //Si no esta definido
-
-#define _boton_h         //defino boton.h
-
 #include <Arduino.h>
+#include <boton.h>
 
-class boton
+boton::boton(byte pin)
 {
-    private:
-        byte _pin;
+    _pin = pin;
+    pinMode(_pin, INPUT);
+    debounceTimeMs = 100;
+    state = Idle;
+    Presstype = NoPress;
+}
 
-        enum State{
-            Idle,                       //Espero a que el boton se presione
-            DevouncingFirstPress,       //Espero el tiempo de rebote
-            WaitingStopPress,           //Espero que suelten el boton
-        };
-        long startDebouncingMillis;
-        State state;
+void boton::Refresh() {
+    switch(state){
+        case Idle:
+            PressType = NoPress;
+            if(digitalRead(_pin)){
+                state = DevouncingFirstPress;
+                startDebouncingMillis = millis();
+            }
+            break;
+        case DevouncingFirstPress:
+            if(millis() - startDebouncingMillis >= debounceTimeMs){
+                if(digitalRead(_pin)){
+                    state = WaitingStopPress;   //Si todavia esta pretado el boton (digital read) se va a poner en el estado WaitingStopPress si no esta presionado se pone en estado Idle
+                }
+            }
+        break;
+        case WaitingStopPress:
+            if(!digitalRead(_pin)){
+                state = Idle;
+                Presstype = Press;
+            }
+            break;
 
-    public:
-        enum PressTypes{
-                NoPress,
-                Press,
-            };
+        default:
+            break;
+    }
+}
 
-    private:
-        PressTypes PressType;
-
-    public:
-        boton(byte pin);
-        int debounceTimeMs;
-        PressTypes GetPressType();
-        void Refresh();
-
-};
-
-#endif
+boton::PressTypes boton::GetPressType(){
+    return Press;
+}
